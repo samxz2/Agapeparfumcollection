@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">Aviso de Privacidad</h1>
+      <p class="text-text-muted">Protegemos tus datos personales</p>
+    </div>
+
+    <div class="space-y-8">
+      <section class="bg-surface/50 rounded-2xl p-6 border border-primary-dark/30">
+        <h2 class="text-2xl font-semibold text-primary mb-4">🔐 ¿Qué información recopilamos?</h2>
+        <p class="text-text-muted mb-3">Cuando realizas una compra a través de nuestro sitio web, el proceso es el siguiente:</p>
+        <ol class="list-decimal list-inside text-text-muted space-y-2 ml-4">
+          <li>Agregas productos a tu carrito en nuestra web.</li>
+          <li>Haces clic en <strong>"Comprar por WhatsApp"</strong>.</li>
+          <li>Se abre un chat de WhatsApp con un mensaje predefinido que contiene los productos y el total.</li>
+          <li><strong>Tú completas manualmente</strong> tus datos (nombre, teléfono, dirección) en el chat.</li>
+        </ol>
+        <p class="text-text-muted mt-4"><strong>Por lo tanto, solo recopilamos la información que TÚ decides escribir en el chat de WhatsApp:</strong></p>
+        <ul class="list-disc list-inside text-text-muted space-y-2 ml-4 mt-2">
+          <li>📝 <strong>Nombre</strong> (el que escribes en el mensaje)</li>
+          <li>📞 <strong>Teléfono de contacto</strong></li>
+          <li>🏠 <strong>Dirección de envío</strong></li>
+          <li>🏙️ <strong>Ciudad</strong></li>
+          <li>📧 <strong>Correo electrónico</strong> (si decides incluirlo)</li>
+        </ul>
+        <p class="text-text-muted mt-3"><strong>NO recopilamos automáticamente:</strong> datos de navegación, preferencias de fragancias, productos vistos, tiempo en página, ni dispositivo usado.</p>
+      </section>
+
+      <section class="bg-surface/50 rounded-2xl p-6 border border-primary-dark/30">
+        <h2 class="text-2xl font-semibold text-primary mb-4">💳 Información de pago</h2>
+        <p class="text-text-muted">Los datos bancarios (transferencias, Pago Móvil, Zelle, Binance, PayPal) <strong>no son procesados ni almacenados en nuestra web</strong>. El pago se coordina directamente por WhatsApp:</p>
+        <ul class="list-disc list-inside text-text-muted space-y-2 ml-4 mt-2">
+          <li>Te enviamos los datos bancarios por chat.</li>
+          <li>Realizas el pago desde tu banco/app.</li>
+          <li>Nos envías el comprobante por WhatsApp.</li>
+          <li><strong>No almacenamos tus datos bancarios en ningún sistema.</strong></li>
+        </ul>
+      </section>
+
+      <section class="bg-surface/50 rounded-2xl p-6 border border-primary-dark/30">
+        <h2 class="text-2xl font-semibold text-primary mb-4">🍪 Uso de cookies y almacenamiento local</h2>
+        <p class="text-text-muted">Nuestro sitio web utiliza <strong>localStorage</strong> (no cookies tradicionales) solo para:</p>
+        <ul class="list-disc list-inside text-text-muted space-y-2 ml-4">
+          <li>🛒 Guardar los productos de tu <strong>carrito</strong> mientras navegas.</li>
+          <li>❤️ Recordar tus <strong>perfumes favoritos</strong> (wishlist).</li>
+          <li>💱 Guardar tu preferencia de <strong>moneda</strong> (USD o Bs).</li>
+        </ul>
+        <p class="text-text-muted mt-3"><strong>Estos datos solo se guardan en tu propio navegador</strong> y no los enviamos a ningún servidor externo. Puedes borrarlos en cualquier momento desde las herramientas del desarrollador o limpiando el almacenamiento del sitio.</p>
+      </section>
+
+      <section class="bg-surface/50 rounded-2xl p-6 border border-primary-dark/30">
+        <h2 class="text-2xl font-semibold text-primary mb-4">📞 Contacto para privacidad</h2>
+        <p class="text-text-muted">Si tienes preguntas sobre cómo manejamos tus datos:</p>
+        <p class="mt-2">📱 WhatsApp: <a href="https://wa.me/584127050149" class="text-primary hover:underline">+58 412-7050149</a></p>
+        <p>📧 Email: <a href="mailto:agapecollection@gmail.com" class="text-primary hover:underline">agapecollection@gmail.com</a></p>
+        <p class="text-text-muted text-sm mt-4">Última actualización: Abril 2026</p>
+      </section>
+    </div>
+  </div>
+</Layout>

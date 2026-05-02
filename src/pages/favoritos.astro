@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Carrito from '../components/vue/Carrito.vue';
+import ProductoCard from '../components/vue/ProductoCard.vue';
+import { useFavoritosStore } from '../store/favoritos.js';
+
+// Esto solo funciona en el servidor, pero no tiene acceso a localStorage
+// Así que mejor dejamos el montaje dinámico pero con otro enfoque
+---
+
+<Layout>
+  <div class="fixed bottom-20 right-4 z-50 md:top-20 md:bottom-auto">
+    <Carrito client:load />
+  </div>
+
+  <section class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <div class="flex justify-center mb-4">
+        <svg class="w-16 h-16 text-red-500 fill-red-500" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">Mis Favoritos</h1>
+      <p class="text-text-muted text-lg max-w-2xl mx-auto">
+        Tus fragancias favoritas guardadas
+      </p>
+    </div>
+
+    <div id="favoritos-container"></div>
+  </section>
+</Layout>
+
+<script>
+// @ts-nocheck
+if (typeof window !== 'undefined') {
+  // Esperar a que todo el HTML cargue
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const [favoritosModule, cardModule, vueModule] = await Promise.all([
+        import('../store/favoritos.js'),
+        import('../components/vue/ProductoCard.vue'),
+        import('vue')
+      ]);
+      
+      const favoritosStore = favoritosModule.useFavoritosStore();
+      const ProductoCard = cardModule.default;
+      const { createApp } = vueModule;
+      
+      const favoritos = favoritosStore.items;
+      const container = document.getElementById('favoritos-container');
+      
+      if (favoritos.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-20">
+            <svg class="w-20 h-20 text-text-muted opacity-50 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-text mb-2">No tienes favoritos aún</h2>
+            <p class="text-text-muted mb-8">Guarda tus perfumes favoritos haciendo clic en el ❤️</p>
+            <a href="/" class="inline-block px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all">Explorar perfumes →</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // Crear grid
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
+      
+      for (const producto of favoritos) {
+        const cardDiv = document.createElement('div');
+        grid.appendChild(cardDiv);
+        createApp(ProductoCard, { producto }).mount(cardDiv);
+      }
+      
+      // Botón vaciar
+      const vaciarBtn = document.createElement('button');
+      vaciarBtn.className = 'text-red-500 hover:text-red-400 transition text-sm mt-8 block mx-auto';
+      vaciarBtn.textContent = 'Vaciar favoritos';
+      vaciarBtn.onclick = () => {
+        if (confirm('¿Seguro que quieres eliminar TODOS tus favoritos?')) {
+          favoritosStore.vaciarFavoritos();
+          location.reload(); // Recargar para actualizar
+        }
+      };
+      
+      container.appendChild(grid);
+      container.appendChild(vaciarBtn);
+      
+    } catch (error) {
+      console.error('Error:', error);
+      document.getElementById('favoritos-container').innerHTML = `<p class="text-red-500 text-center">Error: ${error.message}</p>`;
+    }
+  });
+}
+</script>

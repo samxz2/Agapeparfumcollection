@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div class="min-h-[70vh] flex items-center justify-center px-4">
+    <div class="text-center">
+      <div class="relative mb-8">
+        <h1 class="text-8xl md:text-9xl font-bold text-primary opacity-20">404</h1>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <svg class="w-32 h-32 text-primary/40 animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 12H4M12 4v16" />
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+      </div>
+      
+      <h2 class="text-2xl md:text-3xl font-bold text-text mb-4">
+        ¡Ups! Perfume no encontrado
+      </h2>
+      
+      <p class="text-text-muted max-w-md mx-auto mb-8">
+        Parece que esta fragancia se evaporó en el aire. 
+        Te invitamos a explorar nuestro catálogo.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105">
+          ← Volver al inicio
+        </a>
+        <a href="/caballero" class="px-6 py-3 bg-surface border border-primary-dark/30 hover:border-primary text-text rounded-full transition-all duration-300">
+          Ver perfumes
+        </a>
+      </div>
+      
+      <div class="mt-12 pt-8 border-t border-primary-dark/30">
+        <p class="text-text-muted text-sm mb-3">¿Buscas algo específico?</p>
+        <div class="flex flex-wrap gap-2 justify-center">
+          <a href="/caballero" class="text-sm bg-surface px-4 py-2 rounded-full hover:bg-primary/20 transition">Caballero</a>
+          <a href="/dama" class="text-sm bg-surface px-4 py-2 rounded-full hover:bg-primary/20 transition">Dama</a>
+          <a href="/unisex" class="text-sm bg-surface px-4 py-2 rounded-full hover:bg-primary/20 transition">Unisex</a>
+          <a href="/sets" class="text-sm bg-surface px-4 py-2 rounded-full hover:bg-primary/20 transition">Sets</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Carrito from '../components/vue/Carrito.vue';
+import ProductoCard from '../components/vue/ProductoCard.vue';
+import { perfumes } from '../data/perfumes.js';
+
+const perfumesCaballero = perfumes.filter(p => p.categoria === 'caballero');
+---
+
+<Layout>
+<div class="fixed bottom-20 right-4 z-50 md:top-20 md:bottom-auto">
+  <Carrito client:load />
+</div>
+
+  <section class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-primary mb-4">Perfumes de Caballero</h1>
+      <p class="text-text-muted text-lg max-w-2xl mx-auto">
+        Fragancias intensas y sofisticadas para el hombre moderno
+      </p>
+    </div>
+
+    <!-- Grid de productos -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {perfumesCaballero.map(perfume => (
+        <ProductoCard producto={perfume} client:load />
+      ))}
+    </div>
+
+    <!-- Si no hay productos -->
+    {perfumesCaballero.length === 0 && (
+      <div class="text-center py-20">
+        <p class="text-text-muted">Próximamente más fragancias</p>
+      </div>
+    )}
+  </section>
+</Layout>

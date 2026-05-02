@@ -1,0 +1,196 @@
+---
+import '../styles/global.css';
+import CambiarMoneda from '../components/vue/CambiarMoneda.vue';
+import ReportarProblema from '../components/vue/ReportarProblema.vue';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agape Collection Parfum - Perfumería Exclusiva</title>
+    <meta name="description" content="Descubre nuestra colección exclusiva de perfumes para caballero, dama y unisex. Fragancias 100% originales en Venezuela." />
+    <meta name="keywords" content="perfumes, fragancias, agape collection, perfumes venezuela, perfumes originales" />
+    <meta name="author" content="Agape Collection Parfum" />
+    
+    <link rel="icon" type="image/png" href="https://i.ibb.co/CpHdX08t/1001879919.png" />
+    <link rel="shortcut icon" href="https://i.ibb.co/CpHdX08t/1001879919.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
+  </head>
+  
+  <body class="bg-background text-text font-sans">
+    <!-- Barra de progreso de lectura -->
+    <div id="progressBar" class="fixed top-0 left-0 w-0 h-1 bg-primary z-50 transition-all duration-300"></div>
+    
+    <!-- Header / Navegación -->
+    <nav class="bg-surface/95 backdrop-blur-sm sticky top-0 z-40 border-b border-primary-dark/30">
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <a href="/" class="flex items-center gap-2">
+            <img 
+              src="https://i.ibb.co/CpHdX08t/1001879919.png" 
+              alt="Agape Collection Parfum"
+              class="h-8 md:h-10 w-auto"
+            />
+            <span class="text-lg md:text-xl font-bold text-primary hidden sm:inline">Agape Collection</span>
+          </a>
+          
+          <!-- Desktop: Categorías visibles -->
+          <div class="hidden md:flex items-center gap-4 lg:gap-6">
+            <a href="/" class="hover:text-primary transition">Inicio</a>
+            <a href="/caballero" class="hover:text-primary transition">Caballero</a>
+            <a href="/dama" class="hover:text-primary transition">Dama</a>
+            <a href="/unisex" class="hover:text-primary transition">Unisex</a>
+            <a href="/sets" class="hover:text-primary transition">Sets</a>
+          </div>
+          
+          <!-- Botones derecha -->
+          <div class="flex items-center gap-2 md:gap-3">
+            <!-- Cambiar Moneda -->
+            <CambiarMoneda client:only="vue" />
+            
+            <!-- Favoritos (solo desktop) -->
+            <a href="/favoritos" class="hidden md:flex relative bg-primary-dark p-2 rounded-full hover:bg-primary transition-all shadow-lg">
+              <svg class="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </a>
+            
+            <!-- Botón menú hamburguesa (solo móvil) -->
+            <button id="menuBtn" class="md:hidden text-text hover:text-primary transition p-2">
+              <svg id="menuIconOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              <svg id="menuIconClose" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Menú móvil (solo categorías + favoritos) -->
+        <div id="mobileMenu" class="md:hidden hidden flex-col gap-2 mt-4 pt-4 border-t border-primary-dark/30">
+          <a href="/" class="hover:text-primary transition py-2 px-2">Inicio</a>
+          <a href="/caballero" class="hover:text-primary transition py-2 px-2">Caballero</a>
+          <a href="/dama" class="hover:text-primary transition py-2 px-2">Dama</a>
+          <a href="/unisex" class="hover:text-primary transition py-2 px-2">Unisex</a>
+          <a href="/sets" class="hover:text-primary transition py-2 px-2">Sets</a>
+          <a href="/favoritos" class="hover:text-primary transition py-2 px-2 flex items-center gap-2 border-t border-primary-dark/30 mt-2 pt-2">
+            <svg class="w-5 h-5 text-red-500 fill-red-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            Mis Favoritos
+          </a>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Contenido principal -->
+    <main>
+      <slot />
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-surface mt-20 py-8 border-t border-primary-dark/30">
+      <div class="container mx-auto px-4">
+        <div class="flex justify-center mb-4">
+          <img 
+            src="https://i.ibb.co/CpHdX08t/1001879919.png" 
+            alt="Agape Collection Parfum"
+            class="h-10 w-auto opacity-70"
+          />
+        </div>
+        
+        <div class="text-center text-text-muted text-sm">
+          <p>&copy; 2026 Agape Collection Parfum | Todos los derechos reservados</p>
+          <p class="text-xs mt-1">💬 WhatsApp +58 412-7050149 | 📦 Envíos a toda Venezuela | Fragancias 100% originales</p>
+        </div>
+        
+        <!-- Enlaces legales -->
+        <div class="flex flex-wrap justify-center gap-3 mt-6 text-xs">
+          <a href="/politicas-devolucion" class="text-text-muted hover:text-primary transition">Políticas de Devolución</a>
+          <span class="text-text-muted">•</span>
+          <a href="/terminos-condiciones" class="text-text-muted hover:text-primary transition">Términos y Condiciones</a>
+          <span class="text-text-muted">•</span>
+          <a href="/aviso-privacidad" class="text-text-muted hover:text-primary transition">Aviso de Privacidad</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botón Volver Arriba -->
+    <button 
+      id="backToTopBtn" 
+      class="fixed bottom-6 left-6 md:right-6 md:left-auto z-40 bg-primary-dark hover:bg-primary text-white p-3 rounded-full shadow-lg transition-all duration-300 opacity-0 invisible hover:scale-110"
+      aria-label="Volver arriba"
+    >
+      <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </button>
+
+    <!-- Botón Reportar Problema -->
+    <ReportarProblema client:only="vue" />
+
+    <script>
+      (function() {
+        // ========== MENÚ HAMBURGUESA ==========
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuIconOpen = document.getElementById('menuIconOpen');
+        const menuIconClose = document.getElementById('menuIconClose');
+        
+        if (menuBtn && mobileMenu) {
+          menuBtn.addEventListener('click', () => {
+            const isHidden = mobileMenu.classList.contains('hidden');
+            if (isHidden) {
+              mobileMenu.classList.remove('hidden');
+              if (menuIconOpen) menuIconOpen.classList.add('hidden');
+              if (menuIconClose) menuIconClose.classList.remove('hidden');
+            } else {
+              mobileMenu.classList.add('hidden');
+              if (menuIconOpen) menuIconOpen.classList.remove('hidden');
+              if (menuIconClose) menuIconClose.classList.add('hidden');
+            }
+          });
+        }
+        
+        // ========== BARRA DE PROGRESO ==========
+        const progressBar = document.getElementById('progressBar');
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        
+        function updateProgressAndButton() {
+          const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+          const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+          
+          if (progressBar) {
+            progressBar.style.width = scrolled + '%';
+          }
+          
+          if (backToTopBtn) {
+            if (winScroll > 300) {
+              backToTopBtn.classList.remove('opacity-0', 'invisible');
+              backToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+              backToTopBtn.classList.remove('opacity-100', 'visible');
+              backToTopBtn.classList.add('opacity-0', 'invisible');
+            }
+          }
+        }
+        
+        window.addEventListener('scroll', updateProgressAndButton);
+        window.addEventListener('resize', updateProgressAndButton);
+        updateProgressAndButton();
+        
+        // ========== VOLVER ARRIBA ==========
+        if (backToTopBtn) {
+          backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
