@@ -9,7 +9,7 @@ import { perfumes } from '../data/perfumes.js';
 const PRODUCTOS_INICIALES = 8;
 
 const productosIniciales = perfumes.slice(0, PRODUCTOS_INICIALES);
-const productosRestantes = perfumes.slice(PRODUCTOS_INICIALES);
+const tieneMasPerfumes = perfumes.length > PRODUCTOS_INICIALES;
 ---
 
 <Layout>
@@ -104,16 +104,15 @@ const productosRestantes = perfumes.slice(PRODUCTOS_INICIALES);
         ))}
       </div>
 
-      <!-- VER MÁS: PRODUCTOS OCULTOS CON CLIENT:VISIBLE -->
-      <div class="text-center mt-12">
+      <div id="verMasContainer" class="text-center mt-12">
         <button id="btnVerMas" class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105">
-          Ver más perfumes ({productosRestantes.length} restantes)
+          Ver más perfumes ({perfumes.length - PRODUCTOS_INICIALES} restantes)
         </button>
       </div>
 
       <div id="masProductosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8" style="display: none;">
-        {productosRestantes.map(perfume => (
-          <ProductoCard producto={perfume} client:visible />
+        {perfumes.slice(PRODUCTOS_INICIALES).map(perfume => (
+        <ProductoCard producto={perfume} client:visible />
         ))}
       </div>
 
@@ -192,17 +191,6 @@ if (typeof window !== 'undefined') {
   const normalCount = document.getElementById('normalCount');
   
   let modoBusqueda = false;
-  
-  // Botón Ver Más (SIN DETAILS, con evento manual)
-  const btnVerMas = document.getElementById('btnVerMas');
-  const masContainer = document.getElementById('masProductosContainer');
-  
-  if (btnVerMas && masContainer) {
-    btnVerMas.addEventListener('click', () => {
-      masContainer.style.display = 'grid';
-      btnVerMas.style.display = 'none';
-    });
-  }
   
   const ordenarProductos = (productos, criterio) => {
     const productosCopy = [...productos];
@@ -304,9 +292,8 @@ if (typeof window !== 'undefined') {
     }
     
     const productosContainer = document.getElementById('productosContainer');
-    
-    // Guardar referencia al botón original antes de limpiar
-    const btnVerMasOriginal = document.getElementById('btnVerMas');
+    const masContainer = document.getElementById('masProductosContainer');
+    const verMasContainerDiv = document.getElementById('verMasContainer');
     
     productosContainer.innerHTML = '';
     
@@ -316,33 +303,30 @@ if (typeof window !== 'undefined') {
       createApp(ProductoCardComponent, { producto }).mount(cardDiv);
     }
     
-    // Actualizar contenedor "Ver más"
-    const masContainerActual = document.getElementById('masProductosContainer');
-    const btnVerMasActual = document.getElementById('btnVerMas');
-    
-    if (tieneMas && masContainerActual && btnVerMasActual) {
-      masContainerActual.innerHTML = '';
-      const productosRestantesMostrar = productosFiltrados.slice(PRODUCTOS_INICIALES);
-      for (const producto of productosRestantesMostrar) {
+    if (tieneMas) {
+      masContainer.innerHTML = '';
+      const productosRestantes = productosFiltrados.slice(PRODUCTOS_INICIALES);
+      for (const producto of productosRestantes) {
         const cardDiv = document.createElement('div');
-        masContainerActual.appendChild(cardDiv);
+        masContainer.appendChild(cardDiv);
         createApp(ProductoCardComponent, { producto }).mount(cardDiv);
       }
-      masContainerActual.style.display = 'none';
-      btnVerMasActual.style.display = 'inline-block';
+      masContainer.style.display = 'none';
+      verMasContainerDiv.style.display = 'block';
       
-      // Remover eventos antiguos y agregar nuevo
-      const nuevoBtn = btnVerMasActual.cloneNode(true);
-      btnVerMasActual.parentNode.replaceChild(nuevoBtn, btnVerMasActual);
-      nuevoBtn.addEventListener('click', () => {
-        masContainerActual.style.display = 'grid';
-        nuevoBtn.style.display = 'none';
-      });
-      
-      // Actualizar texto del botón
-      nuevoBtn.textContent = `Ver más perfumes (${productosRestantesMostrar.length} restantes)`;
-    } else if (btnVerMasActual) {
-      btnVerMasActual.style.display = 'none';
+      const btnVerMas = document.getElementById('btnVerMas');
+      if (btnVerMas) {
+        // Remover eventos anteriores y agregar nuevo
+        const nuevoBtn = btnVerMas.cloneNode(true);
+        btnVerMas.parentNode.replaceChild(nuevoBtn, btnVerMas);
+        nuevoBtn.addEventListener('click', () => {
+          masContainer.style.display = 'grid';
+          nuevoBtn.parentNode.style.display = 'none';
+        });
+      }
+    } else {
+      verMasContainerDiv.style.display = 'none';
+      masContainer.style.display = 'none';
     }
   };
   
@@ -404,12 +388,3 @@ if (typeof window !== 'undefined') {
   }
 }
 </script>
-
-<style>
-details summary {
-  list-style: none;
-}
-details summary::-webkit-details-marker {
-  display: none;
-}
-</style>
