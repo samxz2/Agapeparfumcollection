@@ -2,6 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import Carrito from '../components/vue/Carrito.vue';
 import ProductoCard from '../components/vue/ProductoCard.vue';
+import { useFavoritosStore } from '../store/favoritos.js';
+
+// Esto solo funciona en el servidor, pero no tiene acceso a localStorage
+// Así que mejor dejamos el montaje dinámico pero con otro enfoque
 ---
 
 <Layout>
@@ -22,33 +26,30 @@ import ProductoCard from '../components/vue/ProductoCard.vue';
       </p>
     </div>
 
-    <div id="favoritos-container" class="min-h-[50vh]">
-      <div class="text-center py-20">
-        <div class="animate-pulse text-primary">Cargando favoritos...</div>
-      </div>
-    </div>
+    <div id="favoritos-container"></div>
   </section>
 </Layout>
 
 <script>
+// @ts-nocheck
 if (typeof window !== 'undefined') {
-  async function cargarFavoritos() {
+  // Esperar a que todo el HTML cargue
+  document.addEventListener('DOMContentLoaded', async () => {
     try {
-      const PRODUCTOS = await import('../data/perfumes.js');
-      const FAVORITOS_STORE = await import('../store/favoritos.js');
-      const VUE = await import('vue');
-      const CARD = await import('../components/vue/ProductoCard.vue');
+      const [favoritosModule, cardModule, vueModule] = await Promise.all([
+        import('../store/favoritos.js'),
+        import('../components/vue/ProductoCard.vue'),
+        import('vue')
+      ]);
       
-      const favoritosStore = FAVORITOS_STORE.useFavoritosStore();
-      const createApp = VUE.createApp;
-      const ProductoCard = CARD.default;
+      const favoritosStore = favoritosModule.useFavoritosStore();
+      const ProductoCard = cardModule.default;
+      const { createApp } = vueModule;
       
-      const favoritosIds = favoritosStore.items.map(i => i.id);
-      const favoritosProductos = PRODUCTOS.perfumes.filter(p => favoritosIds.includes(p.id));
-      
+      const favoritos = favoritosStore.items;
       const container = document.getElementById('favoritos-container');
       
-      if (favoritosProductos.length === 0) {
+      if (favoritos.length === 0) {
         container.innerHTML = `
           <div class="text-center py-20">
             <svg class="w-20 h-20 text-text-muted opacity-50 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
@@ -66,39 +67,30 @@ if (typeof window !== 'undefined') {
       const grid = document.createElement('div');
       grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
       
-      for (const producto of favoritosProductos) {
+      for (const producto of favoritos) {
         const cardDiv = document.createElement('div');
         grid.appendChild(cardDiv);
         createApp(ProductoCard, { producto }).mount(cardDiv);
       }
       
       // Botón vaciar
-      const vaciarDiv = document.createElement('div');
-      vaciarDiv.className = 'text-center mt-8';
       const vaciarBtn = document.createElement('button');
-      vaciarBtn.className = 'text-red-500 hover:text-red-400 transition text-sm';
+      vaciarBtn.className = 'text-red-500 hover:text-red-400 transition text-sm mt-8 block mx-auto';
       vaciarBtn.textContent = 'Vaciar favoritos';
       vaciarBtn.onclick = () => {
         if (confirm('¿Seguro que quieres eliminar TODOS tus favoritos?')) {
           favoritosStore.vaciarFavoritos();
-          window.location.reload();
+          location.reload(); // Recargar para actualizar
         }
       };
-      vaciarDiv.appendChild(vaciarBtn);
       
-      container.innerHTML = '';
       container.appendChild(grid);
-      container.appendChild(vaciarDiv);
+      container.appendChild(vaciarBtn);
       
     } catch (error) {
       console.error('Error:', error);
-      const container = document.getElementById('favoritos-container');
-      if (container) {
-        container.innerHTML = `<p class="text-red-500 text-center">Error al cargar favoritos: ${error.message}</p>`;
-      }
+      document.getElementById('favoritos-container').innerHTML = `<p class="text-red-500 text-center">Error: ${error.message}</p>`;
     }
-  }
-  
-  cargarFavoritos();
+  });
 }
 </script>
