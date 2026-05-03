@@ -104,18 +104,18 @@ const productosRestantes = perfumes.slice(PRODUCTOS_INICIALES);
         ))}
       </div>
 
-      <!-- ✅ VER MÁS CON DETAILS Y PRODUCTOS EN CLIENT:ONLY -->
-      <details id="verMasDetails" class="text-center mt-12">
-        <summary class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105 cursor-pointer inline-block list-none">
-          Ver más perfumes ({productosRestantes.length} restantes)
-        </summary>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-          {productosRestantes.map(perfume => (
-            <ProductoCard producto={perfume} client:only="vue" />
-          ))}
-        </div>
-      </details>
+ <!-- Botón Ver más estilo acordeón nativo -->
+<details class="text-center mt-12 group">
+  <summary class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105 cursor-pointer inline-block list-none">
+    🔽 Ver más perfumes ({productosRestantes.length} restantes)
+  </summary>
+  
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+    {productosRestantes.map(perfume => (
+      <ProductoCard producto={perfume} client:load />
+    ))}
+  </div>
+</details>
 
       <p class="text-center text-text-muted text-sm mt-8">
         Mostrando <span id="normalCount">{PRODUCTOS_INICIALES}</span> de {perfumes.length} productos
@@ -394,6 +394,17 @@ if (typeof window !== 'undefined') {
       clearSearchBtn.classList.add('hidden');
       actualizarProductosNormales();
     });
+    // Forzar carga de los productos ocultos cuando se abre el details
+const details = document.querySelector('details');
+if (details) {
+  details.addEventListener('toggle', () => {
+    if (details.open) {
+      // Pequeño retraso para asegurar que el DOM se actualice
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 50);
+    }
+  });
   }
 }
 </script>

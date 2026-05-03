@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Carrito from '../components/vue/Carrito.vue';
+import ProductoCard from '../components/vue/ProductoCard.vue';
 ---
 
 <Layout>
@@ -21,96 +22,82 @@ import Carrito from '../components/vue/Carrito.vue';
       </p>
     </div>
 
-    <div id="favoritos-container"></div>
+    <div id="favoritos-container" class="min-h-[50vh]">
+      <div class="text-center py-20">
+        <div class="animate-pulse text-primary">Cargando favoritos...</div>
+      </div>
+    </div>
   </section>
 </Layout>
 
 <script>
-// @ts-nocheck
 if (typeof window !== 'undefined') {
-  let ProductoCardComponent = null;
-  let createApp = null;
-  let favoritosStore = null;
-  
-  const container = document.getElementById('favoritos-container');
-  
   async function cargarFavoritos() {
     try {
-      const [cardModule, vueModule, favoritosModule] = await Promise.all([
-        import('../components/vue/ProductoCard.vue'),
-        import('vue'),
-        import('../store/favoritos.js')
-      ]);
+      const PRODUCTOS = await import('../data/perfumes.js');
+      const FAVORITOS_STORE = await import('../store/favoritos.js');
+      const VUE = await import('vue');
+      const CARD = await import('../components/vue/ProductoCard.vue');
       
-      ProductoCardComponent = cardModule.default;
-      createApp = vueModule.createApp;
-      favoritosStore = favoritosModule.useFavoritosStore();
+      const favoritosStore = FAVORITOS_STORE.useFavoritosStore();
+      const createApp = VUE.createApp;
+      const ProductoCard = CARD.default;
       
-      renderizarFavoritos();
-    } catch (error) {
-      console.error('Error:', error);
-      if (container) {
-        container.innerHTML = `<p class="text-red-500 text-center">Error: ${error.message}</p>`;
+      const favoritosIds = favoritosStore.items.map(i => i.id);
+      const favoritosProductos = PRODUCTOS.perfumes.filter(p => favoritosIds.includes(p.id));
+      
+      const container = document.getElementById('favoritos-container');
+      
+      if (favoritosProductos.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-20">
+            <svg class="w-20 h-20 text-text-muted opacity-50 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-text mb-2">No tienes favoritos aún</h2>
+            <p class="text-text-muted mb-8">Guarda tus perfumes favoritos haciendo clic en el ❤️</p>
+            <a href="/" class="inline-block px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all">Explorar perfumes →</a>
+          </div>
+        `;
+        return;
       }
-    }
-  }
-  
-  function renderizarFavoritos() {
-    const favoritos = favoritosStore.items;
-    
-    if (!container) return;
-    
-    if (favoritos.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-20">
-          <svg class="w-20 h-20 text-text-muted opacity-50 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <h2 class="text-2xl font-semibold text-text mb-2">No tienes favoritos aún</h2>
-          <p class="text-text-muted mb-8">Guarda tus perfumes favoritos haciendo clic en el ❤️</p>
-          <a href="/" class="inline-block px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all">
-            Explorar perfumes →
-          </a>
-        </div>
-      `;
-      return;
-    }
-    
-    container.innerHTML = `
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="favoritos-grid"></div>
-      <div class="text-center mt-8">
-        <button id="vaciarFavoritosBtn" class="text-red-500 hover:text-red-400 transition text-sm">
-          Vaciar favoritos
-        </button>
-      </div>
-    `;
-    
-    const grid = document.getElementById('favoritos-grid');
-    if (grid) {
-      for (const producto of favoritos) {
+      
+      // Crear grid
+      const grid = document.createElement('div');
+      grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6';
+      
+      for (const producto of favoritosProductos) {
         const cardDiv = document.createElement('div');
         grid.appendChild(cardDiv);
-        const app = createApp(ProductoCardComponent, { producto });
-        app.mount(cardDiv);
+        createApp(ProductoCard, { producto }).mount(cardDiv);
       }
-    }
-    
-    const vaciarBtn = document.getElementById('vaciarFavoritosBtn');
-    if (vaciarBtn) {
-      vaciarBtn.addEventListener('click', () => {
+      
+      // Botón vaciar
+      const vaciarDiv = document.createElement('div');
+      vaciarDiv.className = 'text-center mt-8';
+      const vaciarBtn = document.createElement('button');
+      vaciarBtn.className = 'text-red-500 hover:text-red-400 transition text-sm';
+      vaciarBtn.textContent = 'Vaciar favoritos';
+      vaciarBtn.onclick = () => {
         if (confirm('¿Seguro que quieres eliminar TODOS tus favoritos?')) {
           favoritosStore.vaciarFavoritos();
-          renderizarFavoritos();
+          window.location.reload();
         }
-      });
+      };
+      vaciarDiv.appendChild(vaciarBtn);
+      
+      container.innerHTML = '';
+      container.appendChild(grid);
+      container.appendChild(vaciarDiv);
+      
+    } catch (error) {
+      console.error('Error:', error);
+      const container = document.getElementById('favoritos-container');
+      if (container) {
+        container.innerHTML = `<p class="text-red-500 text-center">Error al cargar favoritos: ${error.message}</p>`;
+      }
     }
   }
-  
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'favoritos-agape') {
-      renderizarFavoritos();
-    }
-  });
   
   cargarFavoritos();
 }
