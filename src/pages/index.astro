@@ -9,7 +9,7 @@ import { perfumes } from '../data/perfumes.js';
 const PRODUCTOS_INICIALES = 8;
 
 const productosIniciales = perfumes.slice(0, PRODUCTOS_INICIALES);
-const tieneMasPerfumes = perfumes.length > PRODUCTOS_INICIALES;
+const productosRestantes = perfumes.slice(PRODUCTOS_INICIALES);
 ---
 
 <Layout>
@@ -104,17 +104,18 @@ const tieneMasPerfumes = perfumes.length > PRODUCTOS_INICIALES;
         ))}
       </div>
 
-      <div id="verMasContainer" class="text-center mt-12">
-        <button id="btnVerMas" class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105">
-          Ver más perfumes ({perfumes.length - PRODUCTOS_INICIALES} restantes)
-        </button>
-      </div>
-
-      <div id="masProductosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8" style="display: none;">
-        {perfumes.slice(PRODUCTOS_INICIALES).map(perfume => (
-        <ProductoCard producto={perfume} client:visible />
-        ))}
-      </div>
+      <!-- ✅ VER MÁS CON DETAILS Y PRODUCTOS EN CLIENT:ONLY -->
+      <details id="verMasDetails" class="text-center mt-12">
+        <summary class="px-6 py-3 bg-primary-dark hover:bg-primary text-white rounded-full transition-all duration-300 hover:scale-105 cursor-pointer inline-block list-none">
+          Ver más perfumes ({productosRestantes.length} restantes)
+        </summary>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {productosRestantes.map(perfume => (
+            <ProductoCard producto={perfume} client:only="vue" />
+          ))}
+        </div>
+      </details>
 
       <p class="text-center text-text-muted text-sm mt-8">
         Mostrando <span id="normalCount">{PRODUCTOS_INICIALES}</span> de {perfumes.length} productos
@@ -168,6 +169,15 @@ const tieneMasPerfumes = perfumes.length > PRODUCTOS_INICIALES;
     <BestSellers client:load />
   </div>
 </Layout>
+
+<style>
+details summary {
+  list-style: none;
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+</style>
 
 <script>
 // @ts-nocheck
@@ -305,8 +315,8 @@ if (typeof window !== 'undefined') {
     
     if (tieneMas) {
       masContainer.innerHTML = '';
-      const productosRestantes = productosFiltrados.slice(PRODUCTOS_INICIALES);
-      for (const producto of productosRestantes) {
+      const productosRestantesMostrar = productosFiltrados.slice(PRODUCTOS_INICIALES);
+      for (const producto of productosRestantesMostrar) {
         const cardDiv = document.createElement('div');
         masContainer.appendChild(cardDiv);
         createApp(ProductoCardComponent, { producto }).mount(cardDiv);
@@ -316,7 +326,6 @@ if (typeof window !== 'undefined') {
       
       const btnVerMas = document.getElementById('btnVerMas');
       if (btnVerMas) {
-        // Remover eventos anteriores y agregar nuevo
         const nuevoBtn = btnVerMas.cloneNode(true);
         btnVerMas.parentNode.replaceChild(nuevoBtn, btnVerMas);
         nuevoBtn.addEventListener('click', () => {
